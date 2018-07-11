@@ -21,3 +21,23 @@ getTxtRecord()
 		echo $record
 	fi	
 }
+
+# @params
+# 1: domain
+# @return
+# -1 if curl failed or json domain info
+getJsonDomainInfo()
+{
+	domain=$1
+	url_api="https://use.gameapis.net/mc/extra/blockedservers/check/"
+
+	result=$(curl -s ${url_api}/$domain)
+	curl_code=$(echo $?)
+
+	if [ $curl_code -ne "0" ]
+	then
+		echo -1
+	else
+		echo $result
+	fi
+}
