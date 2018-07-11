@@ -79,3 +79,27 @@ checkIfBlocked()
 		echo 0
 	fi
 }
+
+# Get subdomain to update DNS record
+
+getNewSrvFromConf()
+{
+	domain=$1
+	result=$(cat $conf_domains_unused | egrep -iv "^#" | egrep -m 1 $domain | cut -d";" -f1)
+
+	if [[ "${result}x" == "x" ]]
+	then
+		failMessage 3 "No more subdomains (srv records) to use with domain >> $domain <<."
+	else
+		sed -i "/^${result}/d" $conf_domains_unused
+		echo $result >> $conf_domains_blocked 
+		echo $result 
+	fi
+}
+
+
+# global vars
+conf_path=/etc/minecraftdnsrotator/
+conf_cloudflare=$conf_path/credentials-cloudflare.conf
+conf_domains_unused=$conf_path/domains-unused.conf
+conf_domains_blocked=$conf_path/domains-blocked.conf
