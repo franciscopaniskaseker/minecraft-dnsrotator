@@ -22,6 +22,7 @@ getTxtRecord()
 	fi	
 }
 
+# Get JSON domain info
 # @params
 # 1: domain
 # @return
@@ -41,3 +42,5 @@ getJsonDomainInfo()
 		echo $result
 	fi
 }
+
+
