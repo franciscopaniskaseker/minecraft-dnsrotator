@@ -204,3 +204,13 @@ conf_path=/etc/minecraftdnsrotator/
 conf_cloudflare=$conf_path/credentials-cloudflare.conf
 conf_domains_unused=$conf_path/domains-unused.conf
 conf_domains_blocked=$conf_path/domains-blocked.conf
+
+# main script
+domain=$1
+
+domain_check=$(checkIfBlocked $domain)
+
+if [ $domain_check -eq "1" ]
+then
+	cloudflareUpdateSrv $domain
+fi
