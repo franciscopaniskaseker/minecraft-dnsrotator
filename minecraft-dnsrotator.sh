@@ -49,7 +49,7 @@ getJsonDomainInfo()
 	url_api="https://use.gameapis.net/mc/extra/blockedservers/check/"
 
 	result=$(curl -s ${url_api}/$domain)
-	curl_code=$(echo $?)
+	curl_code=$?
 
 	if [ $curl_code -ne "0" ]
 	then
@@ -114,7 +114,7 @@ cloudflareZoneIdentifier()
  	cloudflare_authkey=$2
 	cloudflare_email=$3
 	zone_identifier=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=$domain" -H "X-Auth-Email: $cloudflare_email" -H "X-Auth-Key: $cloudflare_key" -H "Content-Type: application/json")
-	curl_code=$(echo $?)
+	curl_code=$?
 
 	if [ $curl_code -ne "0" ]
 	then
@@ -147,7 +147,7 @@ cloudflareRecordIdentifier()
 	zone_identifier=$4
 	record_name="_minecraft._tcp.${domain}"
     record_identifier=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$zone_identifier/dns_records?name=$record_name" -H "X-Auth-Email: $cloudflare_email" -H "X-Auth-Key: $cloudflare_key" -H "Content-Type: application/json")
-	curl_code=$(echo $?)
+	curl_code=$?
 
 	if [ $curl_code -ne "0" ]
 	then
