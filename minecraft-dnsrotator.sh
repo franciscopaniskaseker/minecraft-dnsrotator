@@ -8,10 +8,11 @@
 # exit of script
 failMessage()
 {
-	error_code=$1
+	error_code="$1"
 	shift 1
-	error_message=$@
-
+	log_date=$(date -R)
+	error_message="[minecraft-dnsrotator] $log_date #Error code: ${error_code}# $@"
+	echo $error_message | systemd-cat -p warning
 	echo "$error_message"
 	exit $error_code
 }
