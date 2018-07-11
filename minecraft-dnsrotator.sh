@@ -181,7 +181,7 @@ cloudflareUpdateSrv()
 	     -H "X-Auth-Email: $cloudflare_email" \
    		 -H "X-Auth-Key: $cloudflare_authkey" \
 	     -H "Content-Type: application/json" \
-	     --data '{"type":"SRV","name":"_minecraft._tcp.$domain","content":"SRV 1 1 25565 $new_dns","ttl":120,"proxied":false}'
+	     --data "{"type":"SRV","name":"_minecraft._tcp.$domain","content":"SRV 1 1 25565 $new_dns","ttl":120,"proxied":false}"
 	fi
 }
 
