@@ -14,6 +14,7 @@ Shell script
 
 # What we not support yet
 - Multiple _minecraft._tcp.DOMAIN records
+- Multiple domains as parameters of this script
 
 # Software requirements:
 
