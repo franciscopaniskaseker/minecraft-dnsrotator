@@ -94,8 +94,6 @@ getNewSrvFromConf()
 	then
 		failMessage 3 "No more subdomains (srv records) to use with domain >> $domain <<."
 	else
-		sed -i "/^${result}/d" $conf_domains_unused
-		echo $result >> $conf_domains_blocked 
 		echo $result 
 	fi
 }
@@ -191,6 +189,13 @@ cloudflareUpdateSrv()
 	    -H "Content-Type: application/json" \
 		--data '{"zone_name":"'$domain'","zone_id":"'$zone_identifier'","type":"SRV","name":"minecraft._tcp."'$domain'".","content":"SRV 1 1 25565 "'$new_dns'".","data":{"priority":1,"weight":1,"port":25565,"target":"'$new_dns'","service":"_minecraft","proto":"_tcp","name":"'$domain'"},"proxied":false,"proxiable":false,"ttl":1,"priority":1}'
 		curl_code=$?
+		
+		if [ $curl_code -ne 0 ]
+		then
+			failMessage 9 "Failed to write new SRV record"
+		else
+			sed -i "/^${new_dns}/d" $conf_domains_unused
+		fi
 	fi
 }
 
