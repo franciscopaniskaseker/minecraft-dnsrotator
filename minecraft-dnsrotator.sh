@@ -104,13 +104,15 @@ getNewSrvFromConf()
 # Get Zone Identifier
 # @params
 # 1: domain
+# 2: cloudflare_authkey
+# 3: cloudflare_email
 # @return
 # identifier if success, error code if not
 cloudflareZoneIdentifier()
 {
 	domain=$1
- 	cloudflare_authkey=$(echo $result | cut -d";" -f1)
-	cloudflare_email=$(echo $result | cut -d";" -f2)
+ 	cloudflare_authkey=$2
+	cloudflare_email=$3
 	zone_identifier=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=$domain" -H "X-Auth-Email: $cloudflare_email" -H "X-Auth-Key: $cloudflare_key" -H "Content-Type: application/json")
 	curl_code=$(echo $?)
 
@@ -131,16 +133,19 @@ cloudflareZoneIdentifier()
 
 # Get Record Identifier
 # @params
-# 1: domain zone-identifier
+# 1: domain
+# 2: cloudflare authkey
+# 3: cloudflare email
+# 4: zone identifier
 # @return
 # identifier if success, error code if not
 cloudflareRecordIdentifier()
 {
 	domain=$1
-	zone_identifier=$2
+ 	cloudflare_authkey=$2
+	cloudflare_email=$3
+	zone_identifier=$4
 	record_name="_minecraft._tcp.${domain}"
- 	cloudflare_authkey=$(echo $result | cut -d";" -f1)
-	cloudflare_email=$(echo $result | cut -d";" -f2)
     record_identifier=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$zone_identifier/dns_records?name=$record_name" -H "X-Auth-Email: $cloudflare_email" -H "X-Auth-Key: $cloudflare_key" -H "Content-Type: application/json")
 	curl_code=$(echo $?)
 
@@ -177,7 +182,9 @@ cloudflareUpdateSrv()
 		cloudflare_email=$(echo $result | cut -d";" -f2)
 		cloudflare_zoneid=$(echo $result | cut -d";" -f3)
 		new_dns=$(getNewSrvFromConf $domain)
-		curl -X PUT "https://api.cloudflare.com/client/v4/zones/023e105f4ecef8ad9ca31a8372d0c353/dns_records/372e67954025e0ba6aaa6d586b9e0b59" \
+		zone_identifier=$(cloudflareZoneIdentifier $domain $cloudflare_authkey $cloudflare_email)
+		record_identifier=$(cloudflareRecordIdentifier $domain $cloudflare_authkey $cloudflare_email $zone_identifier)
+		curl -X PUT "https://api.cloudflare.com/client/v4/zones/$zone_identifier/dns_records/$record_identifier" \
 	     -H "X-Auth-Email: $cloudflare_email" \
    		 -H "X-Auth-Key: $cloudflare_authkey" \
 	     -H "Content-Type: application/json" \
