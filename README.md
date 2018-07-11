@@ -47,7 +47,7 @@ git clone git@github.com:franciscopaniskaseker/minecraft-dnsrotator.git
 cd minecraft-dnsrotator
 bash install.sh
 ```
-3. Edit "/etc/minecraftdnsrotator/conf/credentials-cloudflare.conf" and insert your Cloudflare credentials.
+3. Edit "/etc/minecraftdnsrotator/conf/credentials-cloudflare.conf" and insert your Cloudflare credentials. "#" is only used to comment lines. Do not write any spaces.
 
 ```bash
 # add credentials (auth key), e-mail (auth) and domains separated with semicolon without spaces
@@ -55,7 +55,7 @@ bash install.sh
 # 09je0923j9032je90dadsadasdasadasdds32je90;admin@domain.com;domain.com
 ```
 
-4. Edit "/etc/minecraftdnsrotator/conf/domains-unused.conf" and insert domains that will be used in the future.
+4. Edit "/etc/minecraftdnsrotator/conf/domains-unused.conf" and insert domains that will be used in the future. "#" is only used to comment lines. Do not write any spaces.
 ```bash
 # add unused subdomains and set which domain will be used separated with semicolon without spaces
 # example:
