@@ -123,7 +123,7 @@ cloudflareZoneIdentifier()
 		then
 			failMessage 6 "Clouflare JSON replied no success on get Zone Identifier >> $domain <<"
 		else
-			zone_identifier=$(echo $zone_identifier | jq '.result.zone_id' | tr -d'"')
+			zone_identifier=$(echo $zone_identifier | jq '.result[0].id' | tr -d "\"")
 			echo $zone_identifier
 		fi
 	fi
@@ -153,7 +153,7 @@ cloudflareRecordIdentifier()
 		then
 			failMessage 8 "Clouflare JSON replied no success on Record Identifier >> $domain <<"
 		else
-			record_identifier=$(echo $record_identifier | jq '.result.id' | tr -d'"')
+			record_identifier=$(echo $record_identifier | jq '.result[0].id' | tr -d "\"")
 			echo $record_identifier
 		fi
 	fi
