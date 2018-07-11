@@ -81,7 +81,10 @@ checkIfBlocked()
 }
 
 # Get subdomain to update DNS record
-
+# @params
+# 1: domain
+# @return
+# subdomain
 getNewSrvFromConf()
 {
 	domain=$1
@@ -97,6 +100,90 @@ getNewSrvFromConf()
 	fi
 }
 
+
+# Get Zone Identifier
+# @params
+# 1: domain
+# @return
+# identifier if success, error code if not
+cloudflareZoneIdentifier()
+{
+	domain=$1
+ 	cloudflare_authkey=$(echo $result | cut -d";" -f1)
+	cloudflare_email=$(echo $result | cut -d";" -f2)
+	zone_identifier=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=$domain" -H "X-Auth-Email: $cloudflare_email" -H "X-Auth-Key: $cloudflare_key" -H "Content-Type: application/json")
+	curl_code=$(echo $?)
+
+	if [ $curl_code -ne "0" ]
+	then
+		failMessage 5 "Curl from cloudflareZoneIdentifier() failed"
+	else
+		json_success=$(echo $zone_identifier | jq '.success')
+		if [[ $json_sucess == "false" ]]
+		then
+			failMessage 6 "Clouflare JSON replied no success on get Zone Identifier >> $domain <<"
+		else
+			zone_identifier=$(echo $zone_identifier | jq '.result.zone_id' | tr -d'"')
+			echo $zone_identifier
+		fi
+	fi
+}
+
+# Get Record Identifier
+# @params
+# 1: domain zone-identifier
+# @return
+# identifier if success, error code if not
+cloudflareRecordIdentifier()
+{
+	domain=$1
+	zone_identifier=$2
+	record_name="_minecraft._tcp.${domain}"
+ 	cloudflare_authkey=$(echo $result | cut -d";" -f1)
+	cloudflare_email=$(echo $result | cut -d";" -f2)
+    record_identifier=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$zone_identifier/dns_records?name=$record_name" -H "X-Auth-Email: $cloudflare_email" -H "X-Auth-Key: $cloudflare_key" -H "Content-Type: application/json")
+	curl_code=$(echo $?)
+
+	if [ $curl_code -ne "0" ]
+	then
+		failMessage 7 "Curl from cloudflareRecordIdentifier() failed"
+	else
+	json_success=$(echo $record_identifier | jq '.success')
+		if [[ $json_sucess == "false" ]]
+		then
+			failMessage 8 "Clouflare JSON replied no success on Record Identifier >> $domain <<"
+		else
+			record_identifier=$(echo $record_identifier | jq '.result.id' | tr -d'"')
+			echo $record_identifier
+		fi
+	fi
+}
+ 
+# Update a SRV record from indicated domain
+# @params
+# 1: domain
+# @return
+# 0 if success, exit with error cod if not
+cloudflareUpdateSrv()
+{
+	domain=$1
+	result=$(cat $conf_cloudflare | egrep -iv "^#" | egrep -m 1 $domain)
+
+	if [[ "${result}x" == "x" ]]
+	then
+		failMessage 4 "No credentials to update >> $domain << on cloudflare."
+	else
+ 		cloudflare_authkey=$(echo $result | cut -d";" -f1)
+		cloudflare_email=$(echo $result | cut -d";" -f2)
+		cloudflare_zoneid=$(echo $result | cut -d";" -f3)
+		new_dns=$(getNewSrvFromConf $domain)
+		curl -X PUT "https://api.cloudflare.com/client/v4/zones/023e105f4ecef8ad9ca31a8372d0c353/dns_records/372e67954025e0ba6aaa6d586b9e0b59" \
+	     -H "X-Auth-Email: $cloudflare_email" \
+   		 -H "X-Auth-Key: $cloudflare_authkey" \
+	     -H "Content-Type: application/json" \
+	     --data '{"type":"SRV","name":"_minecraft._tcp.$domain","content":"SRV 1 1 25565 $new_dns","ttl":120,"proxied":false}'
+	fi
+}
 
 # global vars
 conf_path=/etc/minecraftdnsrotator/
