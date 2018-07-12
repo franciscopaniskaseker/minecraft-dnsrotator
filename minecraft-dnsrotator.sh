@@ -118,7 +118,7 @@ cloudflareZoneIdentifier()
 	domain=$1
  	cloudflare_authkey=$2
 	cloudflare_email=$3
-	zone_identifier=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=$domain" -H "X-Auth-Email: $cloudflare_email" -H "X-Auth-Key: $cloudflare_key" -H "Content-Type: application/json")
+	zone_identifier=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=$domain" -H "X-Auth-Email: $cloudflare_email" -H "X-Auth-Key: $cloudflare_authkey" -H "Content-Type: application/json")
 	curl_code=$?
 
 	if [ $curl_code -ne "0" ]
@@ -151,7 +151,7 @@ cloudflareRecordIdentifier()
 	cloudflare_email=$3
 	zone_identifier=$4
 	record_name="_minecraft._tcp.${domain}"
-    record_identifier=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$zone_identifier/dns_records?name=$record_name" -H "X-Auth-Email: $cloudflare_email" -H "X-Auth-Key: $cloudflare_key" -H "Content-Type: application/json")
+    record_identifier=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$zone_identifier/dns_records?name=$record_name" -H "X-Auth-Email: $cloudflare_email" -H "X-Auth-Key: $cloudflare_authkey" -H "Content-Type: application/json")
 	curl_code=$?
 
 	if [ $curl_code -ne "0" ]
