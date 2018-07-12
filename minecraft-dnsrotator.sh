@@ -207,7 +207,7 @@ cloudflareUpdateSrv()
 }
 
 # global vars
-conf_path=/etc/minecraftdnsrotator/
+conf_path=/etc/minecraftdnsrotator/conf/
 conf_cloudflare=$conf_path/credentials-cloudflare.conf
 conf_domains_unused=$conf_path/domains-unused.conf
 conf_domains_blocked=$conf_path/domains-blocked.conf
