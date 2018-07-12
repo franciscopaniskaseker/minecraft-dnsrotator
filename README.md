@@ -16,6 +16,9 @@ Shell script
 - Multiple _minecraft._tcp.DOMAIN records
 - Multiple domains as parameters of this script
 
+# Features that we want ASAP
+- no-ip / DDNS integration to create and remove subdomains automatically
+
 # Software requirements:
 
 Ubuntu and Debian based systems:
