@@ -186,9 +186,13 @@ cloudflareUpdateSrv()
  		cloudflare_authkey=$(echo $result | cut -d";" -f1)
 		cloudflare_email=$(echo $result | cut -d";" -f2)
 		cloudflare_zoneid=$(echo $result | cut -d";" -f3)
+
 		new_dns=$(getNewSrvFromConf $domain)
+		if [ $? -ne "0" ] ; then exit $?; fi
 		zone_identifier=$(cloudflareZoneIdentifier $domain $cloudflare_authkey $cloudflare_email)
+		if [ $? -ne "0" ] ; then exit $?; fi
 		record_identifier=$(cloudflareRecordIdentifier $domain $cloudflare_authkey $cloudflare_email $zone_identifier)
+		if [ $? -ne "0" ] ; then exit $?; fi
 		
 		curl_result=$(curl -X PUT "https://api.cloudflare.com/client/v4/zones/$zone_identifier/dns_records/$record_identifier" \
 	    -H "X-Auth-Email: $cloudflare_email" \
@@ -222,8 +226,10 @@ conf_domains_blocked=$conf_path/domains-blocked.conf
 domain=$1
 
 domain_check=$(checkIfBlocked $domain)
+if [ $? -ne "0" ] ; then exit $?; fi
 
 if [ $domain_check -eq "1" ]
 then
 	cloudflareUpdateSrv $domain
+	if [ $? -ne "0" ] ; then exit $?; fi
 fi
