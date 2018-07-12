@@ -77,5 +77,5 @@ bash install.sh
 2. bash update.sh
 
 # Do you need any help with Minecraft Server Linux Sysadmin? DDoS attacks? Backups? We can talk ;)
-1. mail apterix at gmail dot com
-2. skype apterix
+1. mail: apterix at gmail dot com
+2. skype: apterix
