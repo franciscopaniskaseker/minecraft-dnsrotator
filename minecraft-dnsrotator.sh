@@ -48,7 +48,7 @@ getJsonDomainInfo()
 	domain=$1
 	url_api="https://use.gameapis.net/mc/extra/blockedservers/check/"
 
-	result=$(curl -s ${url_api}/$domain)
+	result=$(curl -s ${url_api}${domain})
 	curl_code=$?
 
 	if [ $curl_code -ne "0" ]
