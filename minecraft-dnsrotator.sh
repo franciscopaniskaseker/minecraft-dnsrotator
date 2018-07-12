@@ -173,7 +173,7 @@ cloudflareRecordIdentifier()
 # @params
 # 1: domain
 # @return
-# 0 if success, exit with error cod if not
+# 0 if success, exit with error code if not
 cloudflareUpdateSrv()
 {
 	domain=$1
@@ -190,18 +190,24 @@ cloudflareUpdateSrv()
 		zone_identifier=$(cloudflareZoneIdentifier $domain $cloudflare_authkey $cloudflare_email)
 		record_identifier=$(cloudflareRecordIdentifier $domain $cloudflare_authkey $cloudflare_email $zone_identifier)
 		
-		curl -X PUT "https://api.cloudflare.com/client/v4/zones/$zone_identifier/dns_records/$record_identifier" \
+		curl_result=$(curl -X PUT "https://api.cloudflare.com/client/v4/zones/$zone_identifier/dns_records/$record_identifier" \
 	    -H "X-Auth-Email: $cloudflare_email" \
    		-H "X-Auth-Key: $cloudflare_authkey" \
 	    -H "Content-Type: application/json" \
-		--data '{"zone_name":"'$domain'","zone_id":"'$zone_identifier'","type":"SRV","name":"minecraft._tcp."'$domain'".","content":"SRV 1 1 25565 "'$new_dns'".","data":{"priority":1,"weight":1,"port":25565,"target":"'$new_dns'","service":"_minecraft","proto":"_tcp","name":"'$domain'"},"proxied":false,"proxiable":false,"ttl":1,"priority":1}'
+		--data '{"zone_name":"'$domain'","zone_id":"'$zone_identifier'","type":"SRV","name":"minecraft._tcp."'$domain'".","content":"SRV 1 1 25565 "'$new_dns'".","data":{"priority":1,"weight":1,"port":25565,"target":"'$new_dns'","service":"_minecraft","proto":"_tcp","name":"'$domain'"},"proxied":false,"proxiable":false,"ttl":1,"priority":1}')
 		curl_code=$?
 		
 		if [ $curl_code -ne 0 ]
 		then
-			failMessage 9 "Failed to write new SRV record"
+			failMessage 9 "Failed to write new SRV record because curl PUT error"
 		else
-			sed -i "/^${new_dns}/d" $conf_domains_unused
+			if echo $curl_result | jq '.success'
+			then
+				failMessage 10 "Failed to write new SRV record beucase cloudflare API error"
+			else
+				sed -i "/^${new_dns}/d" $conf_domains_unused
+				echo 0
+			fi
 		fi
 	fi
 }
