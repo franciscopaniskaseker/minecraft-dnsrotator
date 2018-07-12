@@ -75,3 +75,7 @@ bash install.sh
 
 1. Update your git
 2. bash update.sh
+
+# Do you need any help with Linux Sysadmin? DDoS? We can talk ;)
+mail apterix at gmail dot com
+skype apterix
