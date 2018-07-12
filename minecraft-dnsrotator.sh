@@ -69,7 +69,14 @@ checkIfBlocked()
 	domain=$1
 	domain_json_info=$(getJsonDomainInfo $domain)
 	domain_srv_record=$(getTxtRecord $domain)
-	domain_json_txt_record=$(echo $domain_json_info | jq --arg domain "$domain" '.[$domain]' | jq --arg domain2 "$domain_srv_record" '.[] | select(.domain==$domain2)')
+
+	if echo $domain_srv_record | egrep -q $domain
+	then
+		domain_json_txt_record=$(echo $domain_json_info | jq --arg domain "$domain" '.[$domain]' | jq --arg domain2 "\*\.${domain}" '.[] | select(.domain==$domain2)')	
+	else
+		domain_json_txt_record=$(echo $domain_json_info | jq --arg domain "$domain" '.[$domain]' | jq --arg domain2 "${domain_srv_record}" '.[] | select(.domain==$domain2)')
+	fi
+
 	domain_json_blocked=$(echo $domain_json_txt_record | jq '.blocked')
 
 	if [[ "$domain_json_blocked" == "true" ]]
